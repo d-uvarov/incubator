@@ -64,8 +64,8 @@ final class EagerLoad
         
         $relation = $this->relation;
 
-        $alias                = $relation->getOptions();
-        $alias                = strtolower($alias['alias']);
+        $alias                = strtolower($relation->getOption('alias'));
+        $params               = $relation->getOption('params');
         $relField             = $relation->getFields();
         $relReferencedModel   = $relation->getReferencedModel();
         $relReferencedField   = $relation->getReferencedFields();
@@ -139,6 +139,11 @@ final class EagerLoad
 
         if ($this->constraints) {
             call_user_func($this->constraints, $builder);
+        }
+
+        // added conditions from relation if exist
+        if (isset($params['conditions'])) {
+            $builder->andWhere($params['conditions']);
         }
 
         $records = [];
